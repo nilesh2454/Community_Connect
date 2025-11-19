@@ -1,7 +1,7 @@
-🌐 Community Connect – Local Service Finder Platform
+🌐 𝗖𝗢𝗠𝗠𝗨𝗡𝗜𝗧𝗬 𝗖𝗢𝗡𝗡𝗘𝗖𝗧 – 𝗟𝗢𝗖𝗔𝗟 𝗦𝗘𝗥𝗩𝗜𝗖𝗘 𝗙𝗜𝗡𝗗𝗘𝗥 𝗣𝗟𝗔𝗧𝗙𝗢𝗥𝗠
 
 A full-stack platform that connects users with nearby verified service providers—including electricians, carpenters, tutors, mechanics, farmers’ helpers, and more.
-Built for speed, scalability, and a smooth user experience using FastAPI, React, and PostgreSQL.
+Built for speed, scalability, and smooth user experience using FastAPI, React, and PostgreSQL.
 
 📁 Project Structure
 community_connect/
@@ -37,7 +37,7 @@ cd ..
 
 3️⃣ Create Environment Config
 
-Create a .env inside the backend folder:
+Create a .env file inside the backend folder:
 
 DATABASE_URL=postgresql://user:password@localhost:5432/community_connect
 SECRET_KEY=your-secret-key
@@ -51,13 +51,13 @@ Backend runs at:
 👉 http://127.0.0.1:8000
 
 🎨 Frontend Setup (React + Vite)
-1️⃣ Move into frontend directory:
+1️⃣ Navigate to frontend directory
 cd frontend
 
-2️⃣ Install dependencies:
+2️⃣ Install dependencies
 npm install
 
-3️⃣ Start the development server:
+3️⃣ Start development server
 npm run dev
 
 
@@ -67,58 +67,58 @@ Frontend runs at:
 🛠️ Tech Stack
 Backend
 
-⚡ FastAPI (High-performance Python framework)
+⚡ FastAPI
 
-🗄️ PostgreSQL (with PostGIS support if needed)
+🗄️ PostgreSQL
 
 🧩 SQLAlchemy ORM
 
 🔐 JWT Authentication
 
-🚀 Uvicorn ASGI Server
+🚀 Uvicorn ASGI
 
 Frontend
 
 ⚛️ React.js
 
-⚡ Vite (Fast bundler)
+⚡ Vite
 
 🎨 Tailwind CSS
 
 🧭 React Router DOM
 
-🔗 Axios for API calls
+🔗 Axios
 
 ⭐ Key Features
 👤 Authentication
 
-Register & Login with JWT
+JWT-based Register & Login
 
 Password hashing
 
-Role-based handling (Customer / Provider)
+Role: Customer / Provider
 
 🔧 Service Management
 
-Providers can create, update, and manage services
+Providers manage services
 
-Users can view services based on categories or local area
+Users browse services
 
 📅 Booking System
 
-Users can book service providers
+Book service providers
 
-Providers can manage booking requests
+Providers handle booking requests
 
-⭐ Review & Ratings
+⭐ Reviews & Ratings
 
-Customers can rate and review completed services
+Customers rate providers
 
-📱 Responsive Frontend
+📱 Responsive UI
 
-Tailwind-powered modern UI
+Tailwind UI
 
-Mobile-first design
+Mobile-first layout
 
 👥 Default Seed Users
 Role	Email	Password
@@ -128,7 +128,7 @@ Customer	customer@example.com
 	customerpass
 📘 API Documentation
 
-Once the backend is running:
+Once backend is running:
 
 Swagger UI → http://127.0.0.1:8000/docs
 
@@ -150,7 +150,7 @@ Fork the repository
 
 Create a new feature branch
 
-Commit changes
+Commit your changes
 
 Submit a pull request
 
