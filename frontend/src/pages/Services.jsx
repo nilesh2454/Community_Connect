@@ -15,7 +15,8 @@ const demoServices = [
     name: 'SparkClean Home Detailing',
     category: 'Home Services',
     description: 'Deep cleaning for apartments and villas using eco-friendly products.',
-    price: 89,
+    // price in INR
+    price: 5000,
     provider_id: demoUsers[0].id,
   },
   {
@@ -23,7 +24,7 @@ const demoServices = [
     name: 'RapidFix Plumbing Rescue',
     category: 'Repairs',
     description: 'Emergency plumbing, leak fixes, and bathroom upgrades within 24 hours.',
-    price: 120,
+    price: 2500,
     provider_id: demoUsers[1].id,
   },
   {
@@ -31,7 +32,7 @@ const demoServices = [
     name: 'Tech Tutor @ Home',
     category: 'Education',
     description: '1-on-1 coding mentorship for Python, JavaScript, and Data Structures.',
-    price: 45,
+    price: 1500,
     provider_id: demoUsers[2].id,
   },
   {
@@ -39,7 +40,7 @@ const demoServices = [
     name: 'Urban Garden Care',
     category: 'Lifestyle',
     description: 'Balcony garden setup, maintenance, and seasonal plant care.',
-    price: 65,
+    price: 1200,
     provider_id: demoUsers[3].id,
   },
   {
@@ -47,7 +48,7 @@ const demoServices = [
     name: 'FitFlow Personal Training',
     category: 'Health & Wellness',
     description: 'Custom workout sessions with nutrition guidance (online/offline).',
-    price: 55,
+    price: 2000,
     provider_id: demoUsers[4].id,
   },
   {
@@ -55,7 +56,7 @@ const demoServices = [
     name: 'EventSnap Photography',
     category: 'Events',
     description: 'Professional photography for birthdays, engagements, and corporate meets.',
-    price: 150,
+    price: 8000,
     provider_id: demoUsers[2].id,
   },
   {
@@ -63,7 +64,7 @@ const demoServices = [
     name: 'Pawfect Grooming',
     category: 'Pet Care',
     description: 'Mobile pet spa, grooming, and basic vet checks for dogs & cats.',
-    price: 70,
+    price: 1000,
     provider_id: demoUsers[1].id,
   },
 ];
@@ -135,6 +136,7 @@ const Services = ({ user }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // The UI accepts prices in INR directly and sends INR to the backend.
       const serviceData = {
         ...formData,
         price: parseFloat(formData.price),
@@ -171,6 +173,12 @@ const Services = ({ user }) => {
       </div>
     );
   }
+
+  const formatINR = (value) => {
+    if (value === undefined || value === null || isNaN(value)) return '₹0';
+    const rounded = Math.round(value);
+    return rounded.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -221,7 +229,7 @@ const Services = ({ user }) => {
               <p className="text-gray-600 mb-4">{service.description}</p>
               <div className="flex justify-between items-center">
                 <span className="text-2xl font-bold text-primary-600">
-                  ${service.price}
+                  {formatINR(service.price)}
                 </span>
                 <span className="text-sm text-gray-500">
                   by {getProviderName(service.provider_id)}
@@ -279,7 +287,7 @@ const Services = ({ user }) => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Price ($)
+                  Price (₹)
                 </label>
                 <input
                   type="number"
