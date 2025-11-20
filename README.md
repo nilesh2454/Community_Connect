@@ -68,6 +68,20 @@ community_connect/
    ```
    App will run at `http://localhost:5173`
 
+## Demo Credentials (Frontend Preview)
+
+When the backend API isn't available (for example, if only the frontend is deployed), use these demo accounts to explore the UI:
+
+- **Provider Demo**  
+  Email: `demo.provider@communityconnect.com`  
+  Password: `Provider@123`
+
+- **Customer Demo**  
+  Email: `demo.customer@communityconnect.com`  
+  Password: `Customer@123`
+
+> The Services and Reviews pages automatically fall back to curated sample data whenever the backend cannot be reached, ensuring the UI stays informative during demos.
+
 
 ## Tech Stack
 

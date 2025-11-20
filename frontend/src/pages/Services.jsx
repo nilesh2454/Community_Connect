@@ -1,10 +1,78 @@
 import React, { useState, useEffect } from 'react';
 import { servicesAPI, authAPI } from '../services/api';
 
+const demoUsers = [
+  { id: 9101, username: 'Aarav Sharma', email: 'aarav@demo-provider.com', is_provider: true },
+  { id: 9102, username: 'Priya Kulkarni', email: 'priya@demo-provider.com', is_provider: true },
+  { id: 9103, username: 'Dev Mehta', email: 'dev@demo-provider.com', is_provider: true },
+  { id: 9104, username: 'Sara Fernandes', email: 'sara@demo-provider.com', is_provider: true },
+  { id: 9105, username: 'Rahul Iyer', email: 'rahul@demo-provider.com', is_provider: true },
+];
+
+const demoServices = [
+  {
+    id: 8101,
+    name: 'SparkClean Home Detailing',
+    category: 'Home Services',
+    description: 'Deep cleaning for apartments and villas using eco-friendly products.',
+    price: 89,
+    provider_id: demoUsers[0].id,
+  },
+  {
+    id: 8102,
+    name: 'RapidFix Plumbing Rescue',
+    category: 'Repairs',
+    description: 'Emergency plumbing, leak fixes, and bathroom upgrades within 24 hours.',
+    price: 120,
+    provider_id: demoUsers[1].id,
+  },
+  {
+    id: 8103,
+    name: 'Tech Tutor @ Home',
+    category: 'Education',
+    description: '1-on-1 coding mentorship for Python, JavaScript, and Data Structures.',
+    price: 45,
+    provider_id: demoUsers[2].id,
+  },
+  {
+    id: 8104,
+    name: 'Urban Garden Care',
+    category: 'Lifestyle',
+    description: 'Balcony garden setup, maintenance, and seasonal plant care.',
+    price: 65,
+    provider_id: demoUsers[3].id,
+  },
+  {
+    id: 8105,
+    name: 'FitFlow Personal Training',
+    category: 'Health & Wellness',
+    description: 'Custom workout sessions with nutrition guidance (online/offline).',
+    price: 55,
+    provider_id: demoUsers[4].id,
+  },
+  {
+    id: 8106,
+    name: 'EventSnap Photography',
+    category: 'Events',
+    description: 'Professional photography for birthdays, engagements, and corporate meets.',
+    price: 150,
+    provider_id: demoUsers[2].id,
+  },
+  {
+    id: 8107,
+    name: 'Pawfect Grooming',
+    category: 'Pet Care',
+    description: 'Mobile pet spa, grooming, and basic vet checks for dogs & cats.',
+    price: 70,
+    provider_id: demoUsers[1].id,
+  },
+];
+
 const Services = ({ user }) => {
   const [services, setServices] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [usingDemoData, setUsingDemoData] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -19,12 +87,23 @@ const Services = ({ user }) => {
     loadUsers();
   }, []);
 
+  const applyDemoData = () => {
+    setServices(demoServices);
+    setUsers(demoUsers);
+    setUsingDemoData(true);
+  };
+
   const loadServices = async () => {
     try {
       const data = await servicesAPI.getServices();
-      setServices(data);
+      if (data && data.length > 0) {
+        setServices(data);
+      } else {
+        applyDemoData();
+      }
     } catch (error) {
       console.error('Failed to load services:', error);
+      applyDemoData();
     } finally {
       setLoading(false);
     }
@@ -33,9 +112,16 @@ const Services = ({ user }) => {
   const loadUsers = async () => {
     try {
       const data = await authAPI.getUsers();
-      setUsers(data);
+      if (data && data.length > 0) {
+        setUsers(data);
+      } else {
+        setUsers(demoUsers);
+        setUsingDemoData(true);
+      }
     } catch (error) {
       console.error('Failed to load users:', error);
+      setUsers(demoUsers);
+      setUsingDemoData(true);
     }
   };
 
@@ -70,8 +156,10 @@ const Services = ({ user }) => {
   };
 
   const getProviderName = (providerId) => {
-    const provider = users.find(u => u.id === providerId);
-    return provider ? provider.username : 'Unknown';
+    const provider =
+      users.find((u) => u.id === providerId) ||
+      demoUsers.find((u) => u.id === providerId);
+    return provider ? provider.username : 'Community Provider';
   };
 
   if (loading) {
@@ -97,6 +185,16 @@ const Services = ({ user }) => {
           </button>
         )}
       </div>
+
+      {usingDemoData && (
+        <div className="mb-8 rounded-xl border border-primary-200 bg-primary-50 px-6 py-4 text-primary-800">
+          <p className="font-semibold">Demo Preview Mode</p>
+          <p className="text-sm">
+            These listings are sample services to showcase the UI when the backend API is unavailable.
+            Sign in to the live backend to view real services.
+          </p>
+        </div>
+      )}
 
       {services.length === 0 ? (
         <div className="text-center py-12">
