@@ -30,10 +30,10 @@ const Login = ({ onLogin }) => {
       // Get user details
       const users = await authAPI.getUsers();
       const user = users.find(u => u.email === formData.email);
-      
+
       if (user) {
         onLogin(user);
-        navigate('/');
+        navigate('/dashboard');
       } else {
         setError('Login successful but user not found');
       }

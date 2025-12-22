@@ -9,3 +9,7 @@ class User(Base):
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
     is_provider = Column(Boolean, default=False)
+    is_admin = Column(Boolean, default=False)
+    phone = Column(String, nullable=True)
+    address = Column(String, nullable=True)
+    bio = Column(String, nullable=True)

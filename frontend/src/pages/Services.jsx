@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { servicesAPI, authAPI } from '../services/api';
+import { servicesAPI, authAPI, bookingsAPI } from '../services/api';
+import axios from 'axios';
 
 const demoUsers = [
   { id: 9101, username: 'Aarav Sharma', email: 'aarav@demo-provider.com', is_provider: true },
@@ -75,12 +76,20 @@ const Services = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const [usingDemoData, setUsingDemoData] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     category: '',
     description: '',
     price: '',
     provider_id: user?.id || '',
+  });
+
+  const [bookingForm, setBookingForm] = useState({
+    user_id: user?.id || '',
+    user_email: '',
+    status: 'pending',
   });
 
   useEffect(() => {
@@ -154,6 +163,57 @@ const Services = ({ user }) => {
       loadServices();
     } catch (error) {
       alert(error.response?.data?.detail || 'Failed to create service');
+    }
+  };
+
+  const openBookingModal = (service) => {
+    setSelectedService(service);
+    setBookingForm({
+      user_id: user?.id || '',
+      user_email: '',
+      status: 'pending',
+    });
+    setShowBookingModal(true);
+  };
+
+  const handleBookingChange = (e) => {
+    setBookingForm({ ...bookingForm, [e.target.name]: e.target.value });
+  };
+
+  const handleBookingSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // 1. Process Payment
+      const paymentPayload = {
+        amount: selectedService.price,
+        currency: "INR",
+        source: "tok_visa", // Mock token
+        description: `Payment for ${selectedService.name}`
+      };
+
+      // We need to use axios directly or add paymentAPI to services/api
+      // Using axios for quick integration
+      await axios.post('http://127.0.0.1:8000/payments/process', paymentPayload);
+
+      // 2. Create Booking
+      const payload = {
+        service_id: selectedService.id,
+        status: bookingForm.status || 'pending',
+      };
+
+      if (bookingForm.user_id) payload.user_id = parseInt(bookingForm.user_id);
+      else if (bookingForm.user_email) payload.user_email = bookingForm.user_email;
+      else {
+        alert('Please select or enter a user to create a booking.');
+        return;
+      }
+
+      await bookingsAPI.createBooking(payload);
+      setShowBookingModal(false);
+      alert('Payment successful! Booking created.');
+    } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.detail || 'Failed to process payment or create booking');
     }
   };
 
@@ -231,9 +291,15 @@ const Services = ({ user }) => {
                 <span className="text-2xl font-bold text-primary-600">
                   {formatINR(service.price)}
                 </span>
-                <span className="text-sm text-gray-500">
-                  by {getProviderName(service.provider_id)}
-                </span>
+                <div className="flex items-center space-x-4">
+                  <span className="text-sm text-gray-500">by {getProviderName(service.provider_id)}</span>
+                  <button
+                    onClick={() => openBookingModal(service)}
+                    className="btn-secondary text-sm"
+                  >
+                    Book Service
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -310,6 +376,72 @@ const Services = ({ user }) => {
                 <button type="submit" className="btn-primary flex-1">
                   Create Service
                 </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Booking Modal */}
+      {showBookingModal && selectedService && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+            <h2 className="text-2xl font-bold mb-4">Book: {selectedService.name}</h2>
+            <form onSubmit={handleBookingSubmit} className="space-y-4">
+              {user ? (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Booking as</label>
+                  <input type="text" className="input-field" value={user.username + ' (' + user.email + ')'} disabled />
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Select User</label>
+                    <select name="user_id" className="input-field" value={bookingForm.user_id} onChange={handleBookingChange}>
+                      <option value="">-- choose user --</option>
+                      {users.map(u => (
+                        <option key={u.id} value={u.id}>{u.username} ({u.email})</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Or enter user email</label>
+                    <input type="email" name="user_email" className="input-field" value={bookingForm.user_email} onChange={handleBookingChange} placeholder="email@example.com" />
+                  </div>
+                </>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <select name="status" className="input-field" value={bookingForm.status} onChange={handleBookingChange}>
+                  <option value="pending">Pending</option>
+                  <option value="Completed">Completed</option>
+                </select>
+              </div>
+
+              <div className="border-t pt-4 mt-4">
+                <h3 className="text-lg font-semibold mb-3">Payment Details (Mock)</h3>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
+                    <input type="text" placeholder="0000 0000 0000 0000" className="input-field" />
+                  </div>
+                  <div className="flex space-x-4">
+                    <div className="flex-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Expiry</label>
+                      <input type="text" placeholder="MM/YY" className="input-field" />
+                    </div>
+                    <div className="flex-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">CVV</label>
+                      <input type="text" placeholder="123" className="input-field" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex space-x-4">
+                <button type="button" onClick={() => setShowBookingModal(false)} className="btn-secondary flex-1">Cancel</button>
+                <button type="submit" className="btn-primary flex-1">Pay & Book</button>
               </div>
             </form>
           </div>

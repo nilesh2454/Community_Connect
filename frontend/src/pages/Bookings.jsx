@@ -168,6 +168,25 @@ const Bookings = ({ user }) => {
                     </p>
                   )}
                 </div>
+                <div className="flex items-center space-x-2">
+                  {booking.status !== 'cancelled' && user && booking.user_id === user.id && (
+                    <button
+                      onClick={async () => {
+                        if (!window.confirm('Cancel this booking?')) return;
+                        try {
+                          await bookingsAPI.cancelBooking(booking.id);
+                          loadBookings();
+                        } catch (err) {
+                          console.error(err);
+                          alert('Failed to cancel booking');
+                        }
+                      }}
+                      className="btn-secondary"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))}

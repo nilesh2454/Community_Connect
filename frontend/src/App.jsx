@@ -12,34 +12,35 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import { authAPI } from './services/api';
 
+import UserDashboard from './pages/UserDashboard';
+import ProviderDashboard from './pages/ProviderDashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import Profile from './pages/Profile';
+
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in (you can enhance this with token storage)
-    const checkAuth = async () => {
-      try {
-        const users = await authAPI.getUsers();
-        // For demo, we'll use the first user or you can implement proper token auth
-        if (users.length > 0) {
-          setUser(users[0]);
-        }
-      } catch (error) {
-        console.error('Auth check failed:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    checkAuth();
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Ideally verify token with backend /me endpoint
+      // For now, just assuming logged in if token exists
+      // You might want to fetch user details here
+      setUser({ token });
+    }
+    setLoading(false);
   }, []);
 
-  const handleLogin = (userData) => {
-    setUser(userData);
+  const handleLogin = (data) => {
+    localStorage.setItem('token', data.access_token);
+    localStorage.setItem('role', data.role);
+    setUser(data);
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
     setUser(null);
   };
 
@@ -50,6 +51,8 @@ function App() {
       </div>
     );
   }
+
+  const role = localStorage.getItem('role');
 
   return (
     <Router>
@@ -63,13 +66,39 @@ function App() {
             <Route path="/services" element={<Services user={user} />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-            <Route 
-              path="/bookings" 
-              element={user ? <Bookings user={user} /> : <Navigate to="/login" replace />} 
+
+            <Route
+              path="/dashboard"
+              element={
+                !user ? <Navigate to="/login" replace /> :
+                  role === 'admin' ? <Navigate to="/admin" replace /> :
+                    role === 'provider' ? <Navigate to="/provider" replace /> :
+                      <UserDashboard />
+              }
             />
-            <Route 
-              path="/reviews" 
-              element={user ? <Reviews user={user} /> : <Navigate to="/login" replace />} 
+
+            <Route
+              path="/admin"
+              element={user && role === 'admin' ? <AdminDashboard /> : <Navigate to="/login" replace />}
+            />
+
+            <Route
+              path="/provider"
+              element={user && role === 'provider' ? <ProviderDashboard /> : <Navigate to="/login" replace />}
+            />
+
+            <Route
+              path="/profile"
+              element={user ? <Profile /> : <Navigate to="/login" replace />}
+            />
+
+            <Route
+              path="/bookings"
+              element={user ? <Bookings user={user} /> : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/reviews"
+              element={user ? <Reviews user={user} /> : <Navigate to="/login" replace />}
             />
           </Routes>
         </main>

@@ -17,53 +17,57 @@ const Navbar = ({ user, onLogout }) => {
             <div className="hidden md:flex space-x-4">
               <Link
                 to="/services"
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive('/services')
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive('/services')
                     ? 'bg-primary-100 text-primary-700'
                     : 'text-gray-700 hover:bg-gray-100'
-                }`}
+                  }`}
               >
                 Services
               </Link>
               <Link
                 to="/about"
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive('/about')
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive('/about')
                     ? 'bg-primary-100 text-primary-700'
                     : 'text-gray-700 hover:bg-gray-100'
-                }`}
+                  }`}
               >
                 About
               </Link>
               <Link
                 to="/contact"
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive('/contact')
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive('/contact')
                     ? 'bg-primary-100 text-primary-700'
                     : 'text-gray-700 hover:bg-gray-100'
-                }`}
+                  }`}
               >
                 Contact
               </Link>
               {user && (
                 <>
                   <Link
-                    to="/bookings"
-                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                      isActive('/bookings')
+                    to="/dashboard"
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive('/dashboard')
                         ? 'bg-primary-100 text-primary-700'
                         : 'text-gray-700 hover:bg-gray-100'
-                    }`}
+                      }`}
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    to="/bookings"
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive('/bookings')
+                        ? 'bg-primary-100 text-primary-700'
+                        : 'text-gray-700 hover:bg-gray-100'
+                      }`}
                   >
                     My Bookings
                   </Link>
                   <Link
                     to="/reviews"
-                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                      isActive('/reviews')
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive('/reviews')
                         ? 'bg-primary-100 text-primary-700'
                         : 'text-gray-700 hover:bg-gray-100'
-                    }`}
+                      }`}
                   >
                     Reviews
                   </Link>

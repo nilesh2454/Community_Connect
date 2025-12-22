@@ -57,3 +57,15 @@ def create_booking(booking: booking_schema.BookingBase, db: Session = Depends(ge
 @router.get("/", response_model=list[booking_schema.BookingResponse])
 def get_bookings(db: Session = Depends(get_db)):
     return db.query(booking_model.Booking).all()
+
+
+@router.patch("/{booking_id}/cancel", response_model=booking_schema.BookingResponse)
+def cancel_booking(booking_id: int, db: Session = Depends(get_db)):
+    booking = db.query(booking_model.Booking).filter(booking_model.Booking.id == booking_id).first()
+    if not booking:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Booking not found")
+    booking.status = "cancelled"
+    db.add(booking)
+    db.commit()
+    db.refresh(booking)
+    return booking

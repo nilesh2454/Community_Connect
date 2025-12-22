@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+ 
 const API_BASE_URL = 'http://127.0.0.1:8000';
 
 const api = axios.create({
@@ -54,6 +54,11 @@ export const bookingsAPI = {
   
   createBooking: async (bookingData) => {
     const response = await api.post('/bookings/', bookingData);
+    return response.data;
+  },
+  
+  cancelBooking: async (bookingId) => {
+    const response = await api.patch(`/bookings/${bookingId}/cancel`);
     return response.data;
   },
 };
